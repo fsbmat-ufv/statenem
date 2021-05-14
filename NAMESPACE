@@ -2,6 +2,7 @@
 
 export("%>%")
 export(enemdown)
+export(readenem)
 export(soma)
 importFrom(magrittr,"%>%")
 importFrom(utils,download.file)
