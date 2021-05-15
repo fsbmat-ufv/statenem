@@ -36,7 +36,7 @@ readenem <- function(ano){
                              na.strings = "",
                              showProgress = TRUE, encoding = "Latin-1",
                              header = TRUE, select = c(1,2,4,6:11,16:18,20,83:86,91:94,99,104:137)) %>%
-    filter(TP_PRESENCA_CN=="1",TP_PRESENCA_CH=="1",TP_PRESENCA_LC=="1",TP_PRESENCA_MT=="1")
+    tidyverse::filter(TP_PRESENCA_CN=="1",TP_PRESENCA_CH=="1",TP_PRESENCA_LC=="1",TP_PRESENCA_MT=="1")
   dados$nt_final <- (rowSums(dados[,c("NU_NOTA_CN", "NU_NOTA_CH", "NU_NOTA_LC", "NU_NOTA_MT", "NU_NOTA_REDACAO")]))/5
   dados <- dados[!is.na(dados$nt_final),]
   summary(dados$nt_final)
