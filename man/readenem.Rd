@@ -2,7 +2,7 @@
 % Please edit documentation in R/readenem.R
 \name{readenem}
 \alias{readenem}
-\title{Faz o download do banco de dados do Enem}
+\title{Faz a leitura do banco de dados do Enem}
 \usage{
 readenem(ano)
 }
