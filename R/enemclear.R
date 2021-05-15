@@ -24,12 +24,12 @@
 #'
 #' @export
 enemclear <- function(ano){
-  df <- if(ano==2018){
+  if(ano==2018){
     df <- "MICRODADOS_ENEM_2018.csv"
   } else {
     df <- "MICRODADOS_ENEM_2019.csv"
   }
-  dados <- data.table::fread(input='df',
+  dados <- data.table::fread(input=df,
                              integer64='character',
                              skip=0, #Ler do inicio
                              nrow=-1, #Ler todos os registros
