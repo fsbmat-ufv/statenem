@@ -44,5 +44,5 @@ enemclear <- function(ano){
                       labels=c("0" , "1", "2", "3", "4"))
     saveRDS(dados, file="dados2018.Rds")
     remove(dados)
-    readRDS("dados2018.Rds")
+    dados <- readRDS("dados2018.Rds")
     }
