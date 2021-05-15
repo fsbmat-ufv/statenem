@@ -43,4 +43,6 @@ enemclear <- function(ano){
                       breaks=c(-Inf, 317.58, 452.735, 587.89, 723.045, 858.2),
                       labels=c("0" , "1", "2", "3", "4"))
     saveRDS(dados, file="dados2018.Rds")
+    remove(dados)
+    readRDS("dados2018.Rds")
     }
