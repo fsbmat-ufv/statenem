@@ -16,7 +16,15 @@ Imports:
     magrittr,
     data.table,
     tidyverse,
-    dplyr
+    dplyr,
+    shiny,
+    lubridate,
+    plotly,
+    treemap,
+    readODS,
+    RColorBrewer,
+    shinydashboard,
+    shinyWidgets
 Suggests: 
     knitr,
     rmarkdown
