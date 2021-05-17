@@ -1,6 +1,6 @@
 Package: statenem
 Type: Package
-Title: Pacote para geração de visualização interativa do ENEM
+Title: Package for the generation of interactive visualization of the National High School Exam
 Version: 0.1.0
 Author: Who wrote it
 Maintainer: The package maintainer <yourself@somewhere.net>
