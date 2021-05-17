@@ -1,37 +1,27 @@
-#' @title Faz o download do banco de dados do Enem
+#' @title Download the Enem database
 #' @name enemdown
 #'
-#' @description Funcao para fazer o download dos
-#' microdados do Enem
+#' @description Function to download the
+#' Enem microdata
 #'
-#' @param ano Ano que voce deseja os microdados
+#' @param year Year you want the microdata
 #'
-#' @details Utilize este campo para escrever detalhes mais tecnicos da
-#'     sua funcao (se necessario), ou para detalhar melhor como
-#'     utilizar determinados argumentos.
-#'
-#' @return o banco de dados do ano \code{ano}.
+#' @return the database of the year \code{year}.
 #'
 #' @author Fernando Bastos
 #'
 #' @importFrom utils download.file unzip
 #'
-#' @examples
-#' soma(2, 2)
-#'
-#' x <- 3
-#' y <- 4
-#' soma(x = x, y = y)
 #'
 #' @export
-enemdown <- function(ano){
-  if (ano=="2018") {
+enemdown <- function(year){
+  if (year=="2018") {
     url <- "https://download.inep.gov.br/microdados/microdados_enem2018.zip"
     download.file(url, destfile = "microdadosenem2018.zip")
     unzip("microdadosenem2018.zip", overwrite = TRUE,  junkpaths = TRUE, files = "DADOS/MICRODADOS_ENEM_2018.csv")
 
   } else{
-    if (ano=="2019") {
+    if (year=="2019") {
       url <- "https://download.inep.gov.br/microdados/microdados_enem2019.zip"
       download.file(url, destfile = "microdadosenem2019.zip")
       unzip("microdadosenem2019.zip", overwrite = TRUE,  junkpaths = TRUE, files = "DADOS/MICRODADOS_ENEM_2019.csv")

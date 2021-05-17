@@ -23,8 +23,8 @@ library("readODS")
 #library("ggpubr")
 library("RColorBrewer")
 library("data.table")
-options(DT.options = list(scrollY="300px",scrollX="300px", 
-                          pageLength = 100, 
+options(DT.options = list(scrollY="300px",scrollX="300px",
+                          pageLength = 100,
                           columnDefs = list(list(className = 'dt-center', targets = "_all"))))
 library("shinydashboard")
 library("shinyWidgets") # nicer inputs
@@ -50,5 +50,5 @@ dred = 'rgb(100,30,30)'
 ## DATA SOURCES
 dados <- readRDS("dados2018.Rds")
 #dados <- readRDS("Enem2018.Rds")
-pop <- data.table::fread("Populacao.csv")
+load(file="pop.rda")
 names(pop) <- c("UF_EXERCICIO", "POPULACAO", "REGIAO")

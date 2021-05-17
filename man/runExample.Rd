@@ -2,28 +2,15 @@
 % Please edit documentation in R/runExample.R
 \name{runExample}
 \alias{runExample}
-\title{Faz a leitura do banco de dados do Enem}
+\title{Compiles the shiny}
 \usage{
 runExample()
 }
 \value{
-o banco de dados do ano \code{ano}.
+An interactive dashboard.
 }
 \description{
-Funcao para gerar o shiny
-}
-\details{
-Utilize este campo para escrever detalhes mais tecnicos da
-    sua funcao (se necessario), ou para detalhar melhor como
-    utilizar determinados argumentos.
-}
-\examples{
-soma(2, 2)
-
-x <- 3
-y <- 4
-soma(x = x, y = y)
-
+Function to generate the shiny
 }
 \author{
 Fernando Bastos

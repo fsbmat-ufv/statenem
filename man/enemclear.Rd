@@ -2,32 +2,19 @@
 % Please edit documentation in R/enemclear.R
 \name{enemclear}
 \alias{enemclear}
-\title{Faz a limpeza do banco de dados do Enem}
+\title{Makes the cleaning of the Enem database}
 \usage{
-enemclear(ano)
+enemclear(year)
 }
 \arguments{
-\item{ano}{Ano que voce deseja os microdados}
+\item{year}{Year you want the microdata}
 }
 \value{
-o banco de dados do ano \code{ano}.
+the database of the year \code{year}.
 }
 \description{
-Funcao para fazer a limpeza e organizacao dos
-microdados do Enem
-}
-\details{
-Utilize este campo para escrever detalhes mais tecnicos da
-    sua funcao (se necessario), ou para detalhar melhor como
-    utilizar determinados argumentos.
-}
-\examples{
-soma(2, 2)
-
-x <- 3
-y <- 4
-soma(x = x, y = y)
-
+Function to do the cleaning and organization of the
+Enem microdata
 }
 \author{
 Fernando Bastos

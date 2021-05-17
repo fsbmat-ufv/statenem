@@ -1,24 +1,14 @@
-#' @title Faz a leitura do banco de dados do Enem
+#' @title Compiles the shiny
 #' @name runExample
 #'
-#' @description Funcao para gerar o shiny
+#' @description Function to generate the shiny
 #'
 #'
-#' @details Utilize este campo para escrever detalhes mais tecnicos da
-#'     sua funcao (se necessario), ou para detalhar melhor como
-#'     utilizar determinados argumentos.
-#'
-#' @return o banco de dados do ano \code{ano}.
+#' @return An interactive dashboard.
 #'
 #' @author Fernando Bastos
 #'
 #'
-#' @examples
-#' soma(2, 2)
-#'
-#' x <- 3
-#' y <- 4
-#' soma(x = x, y = y)
 #'
 #' @export
 runExample <- function() {
