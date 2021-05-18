@@ -25,7 +25,9 @@ Imports:
     RColorBrewer,
     shinydashboard,
     shinyWidgets,
-    DT
+    DT,
+    plyr,
+    ggthemes
 Suggests: 
     knitr,
     rmarkdown
