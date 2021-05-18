@@ -8,7 +8,7 @@
 #'
 #' @return the database of the year \code{year}.
 #'
-#' @author Fernando Bastos
+#' @author Fernando de Souza Bastos
 #'
 #' @importFrom utils download.file unzip
 #'
@@ -26,6 +26,6 @@ enemdown <- function(year){
       download.file(url, destfile = "microdadosenem2019.zip")
       unzip("microdadosenem2019.zip", overwrite = TRUE,  junkpaths = TRUE, files = "DADOS/MICRODADOS_ENEM_2019.csv")
     } else {
-    cat("Não há como baixar de outros anos")
+    cat("There is no download from other years")
   }
   }}

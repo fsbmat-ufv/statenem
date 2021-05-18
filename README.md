@@ -8,17 +8,17 @@ install_github("fsbmat-ufv/statenem")
 library(statenem)
 ```
 
-The first functions to be used are:
+If you want to access the data used, you can use the functions:
 
 ```{r}
 enemdown(2018)
 enemclear(2018)
 ```
-Then, turn shiny with the command:
+To generate the shiny, just use:
 
 ```{r}
 statenem::runExample()
 ```
 
-
+The package is part of the results of the master's thesis work **Aplicação do Modelo de Regressão Logística em Dados de Rendimento do Exame Nacional do Ensino Médio (Enem)**. Defended by student Eveline Júnia Brant Mariz at the Federal University of Viçosa Campus UFV - Florestal in June 2021.
 

@@ -1,11 +1,19 @@
 Package: statenem
-Type: Package
 Title: Package for the generation of interactive visualization of the National High School Exam
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Version: 0.0.0.9000
+Authors@R: c(
+  person( given = "Fernando", family = "de Souza Bastos", role = c( "aut", "cre" ),
+          email = "fernando.bastos@ufv.br" ),
+  person( given = "Eveline", family = "Júnia Brant Mariz", role = "aut" ))
+Author: Fernando de Souza Bastos [aut, cre],
+        Eveline Júnia Brant Mariz [aut]
+Maintainer: Fernando de Souza Bastos <fernando.bastos@ufv.br>
+Description: Dashboard with descriptive analysis of 
+the database of the National High School Exam, 
+determining the state with the largest number of 
+competitors, the gender of the candidates and 
+several other social, economic and phenotypic 
+characteristics.
 License: GPL (>=3)
 Encoding: UTF-8
 LazyData: true
@@ -33,4 +41,4 @@ Suggests:
     rmarkdown
 VignetteBuilder: knitr
 Depends: 
-    R (>= 2.10)
+    R (>= 3.6.0)
