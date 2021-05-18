@@ -48,10 +48,8 @@ dred = 'rgb(100,30,30)'
 
 ##############################################################################
 ## DATA SOURCES
-year <- getOption("year")
-enemdown(year)
-enemclear(year)
-dados <- readRDS("dados2018.Rds")
+
+load(file="dados.rda")
 #dados <- readRDS("Enem2018.Rds")
 load(file="pop.rda")
 names(pop) <- c("UF_EXERCICIO", "POPULACAO", "REGIAO")
