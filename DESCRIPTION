@@ -24,7 +24,8 @@ Imports:
     readODS,
     RColorBrewer,
     shinydashboard,
-    shinyWidgets
+    shinyWidgets,
+    DT
 Suggests: 
     knitr,
     rmarkdown
