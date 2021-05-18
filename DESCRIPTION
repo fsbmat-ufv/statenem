@@ -9,11 +9,11 @@ Author: Fernando de Souza Bastos [aut, cre],
         Eveline Júnia Brant Mariz [aut]
 Maintainer: Fernando de Souza Bastos <fernando.bastos@ufv.br>
 Description: Dashboard with descriptive analysis of 
-the database of the National High School Exam, 
-determining the state with the largest number of 
-competitors, the gender of the candidates and 
-several other social, economic and phenotypic 
-characteristics.
+    the database of the National High School Exam, 
+    determining the state with the largest number of 
+    competitors, the gender of the candidates and 
+    several other social, economic and phenotypic 
+    characteristics.
 License: GPL (>=3)
 Encoding: UTF-8
 LazyData: true
