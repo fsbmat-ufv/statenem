@@ -6,11 +6,11 @@
 #'
 #' @return An interactive dashboard.
 #'
-#' @author Fernando Bastos
+#' @author Fernando de Souza Bastos
 #'
 #'
 #'
-#' @export
+#'@export
 runShinyApp <- function() {
   appDir <- system.file("shiny-examples", "myapp", package = "statenem")
   options(year = year)

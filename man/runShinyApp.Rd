@@ -13,5 +13,5 @@ An interactive dashboard.
 Function to generate the shiny
 }
 \author{
-Fernando Bastos
+Fernando de Souza Bastos
 }
