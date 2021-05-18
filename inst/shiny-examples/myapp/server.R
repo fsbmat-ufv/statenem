@@ -13,8 +13,8 @@ shinyServer(function(input, output, session) {
     ##################################################################
     ######################### DADOS DO PARTICIPANTE ##################
     ##################################################################
-    output$table1 <- DT::renderDataTable({
-        DT::datatable(dados,
+    output$table1 <- data.table::renderDataTable({
+        data.table::datatable(dados,
                       class = 'cell-border stripe',
                       extensions = 'Buttons', options = list(
                           dom = 'Bfrtip',
