@@ -22,6 +22,7 @@ library("readODS")
 #library("gridExtra")
 #library("ggpubr")
 library("RColorBrewer")
+library("DT")
 library("data.table")
 options(DT.options = list(scrollY="300px",scrollX="300px",
                           pageLength = 100,
