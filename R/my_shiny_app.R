@@ -1,3 +1,5 @@
+#' The Shiny App.
+#' @export
 my_shiny_app <- function(thedata, ...) {
   shiny_env <- new.env()
   if(!missing(thedata)) {

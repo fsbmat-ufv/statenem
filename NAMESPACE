@@ -3,6 +3,7 @@
 export("%>%")
 export(enemclear)
 export(enemdown)
+export(my_shiny_app)
 export(runExample)
 export(shiny_server)
 export(shiny_ui)
