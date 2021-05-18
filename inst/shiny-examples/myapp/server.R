@@ -13,8 +13,8 @@ shinyServer(function(input, output, session) {
     ##################################################################
     ######################### DADOS DO PARTICIPANTE ##################
     ##################################################################
-    output$table1 <- data.table::renderDataTable({
-        data.table::datatable(dados,
+    output$table1 <- DT::renderDataTable({
+        DT::datatable(dados,
                       class = 'cell-border stripe',
                       extensions = 'Buttons', options = list(
                           dom = 'Bfrtip',
@@ -31,13 +31,13 @@ shinyServer(function(input, output, session) {
             df <- dados %>% select(NU_IDADE, TP_SEXO) %>% dplyr::filter(!is.na(NU_IDADE)) %>%
                 dplyr::group_by(NU_IDADE, TP_SEXO=as.factor(TP_SEXO)) %>% dplyr::summarise(Valor=n())
             df$TP_SEXO <- plyr::revalue(df$TP_SEXO, c("F"="Feminino", "M"="Masculino"))
-        p <-  ggplot2::ggplot2::ggplot(df, aes(NU_IDADE, Valor,
+        p <-  ggplot2::ggplot(df, aes(NU_IDADE, Valor,
                        group=TP_SEXO, fill=TP_SEXO,
                        text=paste("Idade: ", NU_IDADE, "<br>",
                                   "Sexo: ", TP_SEXO, "<br>",
                                   "Quantidade: ", Valor))) +
-            geom_bar(aes(NU_IDADE,Valor,group=TP_SEXO,fill=TP_SEXO), stat = "identity",subset(df,df$TP_SEXO=="Feminino")) +
-            geom_bar(aes(NU_IDADE,-Valor,group=TP_SEXO,fill=TP_SEXO), stat = "identity",subset(df,df$TP_SEXO=="Masculino")) +
+            ggplot2::geom_bar(aes(NU_IDADE,Valor,group=TP_SEXO,fill=TP_SEXO), stat = "identity",subset(df,df$TP_SEXO=="Feminino")) +
+            ggplot2::geom_bar(aes(NU_IDADE,-Valor,group=TP_SEXO,fill=TP_SEXO), stat = "identity",subset(df,df$TP_SEXO=="Masculino")) +
             scale_y_continuous(breaks=seq(-300000,400000,100000),labels=abs(seq(-300000,400000,100000))) +
             coord_flip()+ggplot2::labs(y="Quantidade de Candidatos", x="Idade")
         plotly::ggplotly(p, tooltip = "text") %>% plotly::layout(legend = list(x = 0.6, y = 0.9))
@@ -66,7 +66,7 @@ shinyServer(function(input, output, session) {
         df <- dados %>% dplyr::filter(!is.na(TP_SEXO)) %>% dplyr::group_by(TP_SEXO) %>% dplyr::summarise(Numero=n())
         df <- data.frame(GE=c("Feminino", "Masculino"), Quant=df$Numero)
         df$Prop <- round((df$Quant/sum(df$Quant)), digits = 3)
-        p1 <- df %>% ggplot2::ggplot2::ggplot(aes(reorder(GE, GE),
+        p1 <- df %>% ggplot2::ggplot(aes(reorder(GE, GE),
                                 Quant, fill=GE,
                                 label=Quant,
                                 text=paste("Gênero: ", GE, "<br>",
@@ -78,13 +78,13 @@ shinyServer(function(input, output, session) {
                y="Quantidade",
                title = "Quantidade de Candidatos por Gênero")
         plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE) %>%
-          style(textposition = "top")
+          plotly::style(textposition = "top")
 
       } else {
         dados3 <- dados %>% dplyr::filter(!is.na(TP_SEXO)&!is.na(NU_IDADE)) %>%
           dplyr::group_by(TP_SEXO) %>% dplyr::summarise(Media=mean(NU_IDADE),Quant=n())
         dados3 <- data.frame(GE=c("Feminino", "Masculino"), Media=dados3$Media, Quant=dados3$Quant)
-        p1 <- dados3 %>% ggplot2::ggplot2::ggplot(aes(reorder(GE, Media), Media,
+        p1 <- dados3 %>% ggplot2::ggplot(aes(reorder(GE, Media), Media,
                                     fill=GE, label=Media,
                                     text=paste("Gênero: ", GE, "<br>",
                                                "Média de Idade: ", Media, "<br>",
@@ -95,7 +95,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Gênero",
                y="Média de Idade",
                title = "Média de Idade por Gênero")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       }
 
@@ -110,7 +110,7 @@ shinyServer(function(input, output, session) {
         df <- dados %>% dplyr::filter(!is.na(TP_ESTADO_CIVIL)) %>% dplyr::group_by(TP_ESTADO_CIVIL) %>% dplyr::summarise(Numero=n())
         df <- data.frame(EC=c("0-Solteiro", "1-Casado", "2-Divorciado", "3-Viúvo"), Quant=df$Numero)
         df$Prop <- round((df$Quant/sum(df$Quant)), digits = 3)
-        p1 <- df %>% ggplot2::ggplot2::ggplot(aes(reorder(EC, EC),
+        p1 <- df %>% ggplot2::ggplot(aes(reorder(EC, EC),
                                 Quant, fill=EC,
                                 label=Quant,
                                 text=paste("Estado Cívil: ", EC, "<br>",
@@ -122,14 +122,14 @@ shinyServer(function(input, output, session) {
                y="Quantidade",
                title = "Quantidade de Candidatos por Estado Cívil")
         plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE) %>%
-          style(textposition = "top")
+          plotly::style(textposition = "top")
 
       } else {
         dados3 <- dados %>% dplyr::filter(!is.na(TP_ESTADO_CIVIL)&!is.na(NU_IDADE)) %>%
           dplyr::group_by(TP_ESTADO_CIVIL) %>% dplyr::summarise(Media=mean(NU_IDADE),Quant=n())
         names(dados3)<-c("EC","Media","Quant")
         dados3 <- data.frame(EC=c("0-Solteiro", "1-Casado", "2-Divorciado", "3-Viúvo"), Media=dados3$Media, Quant=dados3$Quant)
-        p1 <- dados3 %>% ggplot2::ggplot2::ggplot(aes(reorder(EC, Media), Media,
+        p1 <- dados3 %>% ggplot2::ggplot(aes(reorder(EC, Media), Media,
                                     fill=EC, label=Media,
                                     text=paste("Estado Cívil: ", EC, "<br>",
                                                "Média de Idade: ", Media, "<br>",
@@ -140,7 +140,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Estado Cívil",
                y="Média de Idade",
                title = "Média de Idade por Estado Cívil")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       }
 
@@ -155,7 +155,7 @@ shinyServer(function(input, output, session) {
         names(dados)<-c("Raca","Media","Quant")
         df <- data.frame(Raca=c("0-Não Declarado", "1-Branca", "2-Preta", "3-Parda", "4-Amarela", "5-Indígena"), Quant=df$Numero)
         df$Prop <- round((df$Quant/sum(df$Quant)), digits = 3)
-        p1 <- df %>% ggplot2::ggplot2::ggplot(aes(reorder(Raca, Raca),
+        p1 <- df %>% ggplot2::ggplot(aes(reorder(Raca, Raca),
                                 Quant, fill=Raca,
                                 label=Quant,
                                 text=paste("Cor/Raça: ", Raca, "<br>",
@@ -167,14 +167,14 @@ shinyServer(function(input, output, session) {
                y="Quantidade",
                title = "Quantidade de Candidatos por Cor/Raça")
         plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE) %>%
-          style(textposition = "top")
+          plotly::style(textposition = "top")
 
       } else {
         dados3 <- dados %>% dplyr::filter(!is.na(TP_COR_RACA)&!is.na(NU_IDADE)) %>%
           dplyr::group_by(TP_COR_RACA) %>% dplyr::summarise(Media=mean(NU_IDADE),Quant=n())
         names(dados3)<-c("Raca","Media","Quant")
         dados3 <- data.frame(Raca=c("0-Não Declarado", "1-Branca", "2-Preta", "3-Parda", "4-Amarela", "5-Indígena"), Media=dados3$Media, Quant=dados3$Quant)
-        p1 <- dados3 %>% ggplot2::ggplot2::ggplot(aes(reorder(Raca, Raca), Media,
+        p1 <- dados3 %>% ggplot2::ggplot(aes(reorder(Raca, Raca), Media,
                                     fill=Raca, label=Media,
                                     text=paste("Cor/Raça: ", Raca, "<br>",
                                                "Média de Idade: ", Media, "<br>",
@@ -185,7 +185,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Cor/Raça",
                y="Média de Idade",
                title = "Média de Idade por Cor/Raça")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       }
 
@@ -199,17 +199,17 @@ shinyServer(function(input, output, session) {
             g4 <- dados %>%
                 dplyr::group_by(SG_UF_RESIDENCIA) %>% subset(!is.na(SG_UF_RESIDENCIA))  %>%
                 dplyr::summarise(quantidade = n()) %>%
-                ggplot2::ggplot2::ggplot(aes(x = SG_UF_RESIDENCIA, y = quantidade,
+                ggplot2::ggplot(aes(x = SG_UF_RESIDENCIA, y = quantidade,
                            fill = SG_UF_RESIDENCIA,
                            text = paste("Estado: ", SG_UF_RESIDENCIA, "<br>",
                                         "Nr. de Candidatos: ", quantidade))) +
-                geom_bar(stat = "identity", show.legend = FALSE) +
+                ggplot2::geom_bar(stat = "identity", show.legend = FALSE) +
                 ggplot2::geom_text(vjust = -2, size = 3, aes(label=quantidade))+
                 #facet_grid(ANO ~ ., scales = "free_y") +
                 ggplot2::labs(title = "Quantidade de Candidatos por Estado",
                      x = "Estado", y = "Quantidade")
 
-            plotly::ggplotly(g4, tooltip = "text")%>% style(textposition = "top") %>%
+            plotly::ggplotly(g4, tooltip = "text")%>% plotly::style(textposition = "top") %>%
                 plotly::layout(showlegend = FALSE)
         }else{
             if(input$variableUF=="UF3"){
@@ -222,12 +222,12 @@ shinyServer(function(input, output, session) {
                 table_UF <- merge(table_UF, pop, by="UF_EXERCICIO")
                 table_UF$PROP = round(1000*(table_UF$NUM_CAND/table_UF$POPULACAO),2)
 
-                ggplot2::ggplot2::ggplot(data=table_UF, aes(x=reorder(UF_EXERCICIO, PROP), y=PROP, fill=REGIAO)) +
-                    geom_bar(stat="identity") + coord_flip() +
+                ggplot2::ggplot(data=table_UF, aes(x=reorder(UF_EXERCICIO, PROP), y=PROP, fill=REGIAO)) +
+                    ggplot2::geom_bar(stat="identity") + coord_flip() +
                     ggplot2::geom_text(hjust = -0.2, size = 5, aes(label=PROP))+
                     ggplot2::labs(title="Número de Candidatos a Cada 1000 Habitantes do Estado", x="Estado",
                          y="Número de Candidatos") +
-                    theme_stata()
+                    ggplot2::theme_stata()
             }else{
                 ##
             }
@@ -245,7 +245,7 @@ shinyServer(function(input, output, session) {
         df <- dados %>% dplyr::filter(!is.na(TP_ST_CONCLUSAO)) %>% dplyr::group_by(TP_ST_CONCLUSAO) %>% dplyr::summarise(Numero=n())
         df <- data.frame(Sit=c("1-Concluído", "2-Concluíndo em 2018", "3-Concluíndo após 2018", "4-Não concluído e não cursando"), Quant=df$Numero)
         df$Prop <- round((df$Quant/sum(df$Quant)), digits = 3)
-        p1 <- df %>% ggplot2::ggplot2::ggplot(aes(reorder(Sit, Sit),
+        p1 <- df %>% ggplot2::ggplot(aes(reorder(Sit, Sit),
                                 Quant, fill=Sit,
                                 label=Quant,
                                 text=paste("Cor/Raça: ", Sit, "<br>",
@@ -257,13 +257,13 @@ shinyServer(function(input, output, session) {
                y="Quantidade",
                title = "Quantidade de Candidatos por Situação de Conclusão")
         plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE) %>%
-          style(textposition = "top")
+          plotly::style(textposition = "top")
 
       } else {
         dados3 <- dados %>% dplyr::filter(!is.na(TP_ST_CONCLUSAO)&!is.na(NU_IDADE)) %>%
           dplyr::group_by(TP_ST_CONCLUSAO) %>% dplyr::summarise(Media=mean(NU_IDADE),Quant=n())
         dados3 <- data.frame(Sit=c("1-Concluído", "2-Concluíndo em 2018", "3-Concluíndo após 2018", "4-Não concluído e não cursando"), Media=dados3$Media, Quant=dados3$Quant)
-        p1 <- dados3 %>% ggplot2::ggplot2::ggplot(aes(reorder(Sit, Sit), Media,
+        p1 <- dados3 %>% ggplot2::ggplot(aes(reorder(Sit, Sit), Media,
                                     fill=Sit, label=Media,
                                     text=paste("Cor/Raça: ", Sit, "<br>",
                                                "Média de Idade: ", Media, "<br>",
@@ -274,7 +274,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Situação de Conclusão do Ensino Médio",
                y="Média de Idade",
                title = "Média de Idade por Situação de Conclusão")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       }
 
@@ -289,7 +289,7 @@ shinyServer(function(input, output, session) {
         df <- dados %>% dplyr::filter(!is.na(TP_ANO_CONCLUIU)) %>% dplyr::group_by(TP_ANO_CONCLUIU) %>% dplyr::summarise(Numero=n())
         df <- data.frame(Anno=c("Não informado", "2017", "2016", "2015", "2014", "2013", "2012", "2011", "2010", "2009", "2008", "2007", "2006 ou Antes"), Quant=df$Numero)
         df$Prop <- round((df$Quant/sum(df$Quant)), digits = 3)
-        p1 <- df %>% ggplot2::ggplot2::ggplot(aes(reorder(Anno, Anno),
+        p1 <- df %>% ggplot2::ggplot(aes(reorder(Anno, Anno),
                                 Quant, fill=Anno,
                                 label=Quant,
                                 text=paste("Cor/Raça: ", Anno, "<br>",
@@ -301,13 +301,13 @@ shinyServer(function(input, output, session) {
                y="Quantidade",
                title = "Quantidade de Candidatos por Ano de Conclusão do Ensino Médio")
         plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE) %>%
-          style(textposition = "top")
+          plotly::style(textposition = "top")
 
       } else {
         dados3 <- dados %>% dplyr::filter(!is.na(TP_ANO_CONCLUIU)&!is.na(NU_IDADE)) %>%
           dplyr::group_by(TP_ANO_CONCLUIU) %>% dplyr::summarise(Media=mean(NU_IDADE),Quant=n())
         dados3 <- data.frame(Anno=c("Não informado", "2017", "2016", "2015", "2014", "2013", "2012", "2011", "2010", "2009", "2008", "2007", "2006 ou Antes"), Media=dados3$Media, Quant=dados3$Quant)
-        p1 <- dados3 %>% ggplot2::ggplot2::ggplot(aes(reorder(Anno, Anno), Media,
+        p1 <- dados3 %>% ggplot2::ggplot(aes(reorder(Anno, Anno), Media,
                                     fill=Anno, label=Media,
                                     text=paste("Cor/Raça: ", Anno, "<br>",
                                                "Média de Idade: ", Media, "<br>",
@@ -318,7 +318,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Ano de Conclusão do Ensino Médio",
                y="Média de Idade",
                title = "Média de Idade por Ano de Conclusão do Ensino Médio")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       }
 
@@ -332,7 +332,7 @@ shinyServer(function(input, output, session) {
         df <- dados %>% dplyr::filter(!is.na(TP_ESCOLA)) %>% dplyr::group_by(TP_ESCOLA) %>% dplyr::summarise(Numero=n())
         df <- data.frame(Tipo=c("Não Respondeu", "Pública", "Exterior", "Privada"), Quant=df$Numero)
         df$Prop <- round((df$Quant/sum(df$Quant)), digits = 3)
-        p1 <- df %>% ggplot2::ggplot2::ggplot(aes(reorder(Tipo, Tipo),
+        p1 <- df %>% ggplot2::ggplot(aes(reorder(Tipo, Tipo),
                                 Quant, fill=Tipo,
                                 label=Quant,
                                 text=paste("Cor/Raça: ", Tipo, "<br>",
@@ -344,13 +344,13 @@ shinyServer(function(input, output, session) {
                y="Quantidade",
                title = "Quantidade de Candidatos por Tipo de Escola")
         plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE) %>%
-          style(textposition = "top")
+          plotly::style(textposition = "top")
 
       } else {
         dados3 <- dados %>% dplyr::filter(!is.na(TP_ESCOLA)&!is.na(NU_IDADE)) %>%
           dplyr::group_by(TP_ESCOLA) %>% dplyr::summarise(Media=mean(NU_IDADE),Quant=n())
         dados3 <- data.frame(Tipo=c("Não Respondeu", "Pública", "Exterior", "Privada"), Media=dados3$Media, Quant=dados3$Quant)
-        p1 <- dados3 %>% ggplot2::ggplot2::ggplot(aes(reorder(Tipo, Tipo), Media,
+        p1 <- dados3 %>% ggplot2::ggplot(aes(reorder(Tipo, Tipo), Media,
                                     fill=Tipo, label=Media,
                                     text=paste("Cor/Raça: ", Tipo, "<br>",
                                                "Média de Idade: ", Media, "<br>",
@@ -361,7 +361,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Tipo de Escola",
                y="Média de Idade",
                title = "Média de Idade por Tipo de Escola")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       }
 
@@ -388,8 +388,8 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Tipo de Ensino",
                y="Quantidade",
                title = "Quantidade de Candidatos por Tipo de Ensino")
-        plotly::plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE) %>%
-          style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE) %>%
+          plotly::style(textposition = "top")
 
       } else {
         dados3 <- dados %>% dplyr::filter(!is.na(TP_ENSINO)&!is.na(NU_IDADE)) %>%
@@ -406,7 +406,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Tipo de Ensino",
                y="Média de Idade",
                title = "Média de Idade por Tipo de Ensino")
-        plotly::plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       }
 
@@ -434,13 +434,13 @@ shinyServer(function(input, output, session) {
                                   text=paste("Cor/Raça: ", Dadm, "<br>",
                                              "Número de Candidatos: ", Quant, "<br>",
                                              "Proporção Candidatos: ", Prop))) +
-            ggplot2::ggplot2::geom_col(show.legend = FALSE)+
+            ggplot2::geom_col(show.legend = FALSE)+
             ggplot2::geom_text()+
             ggplot2::labs(x="Esfera Administrativa",
                  y="Quantidade",
                  title = "Quantidade de Candidatos por Esfera Administrativa")
           plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE) %>%
-            style(textposition = "top")
+            plotly::style(textposition = "top")
 
         } else {
           dados3 <- dados %>% dplyr::filter(!is.na(TP_DEPENDENCIA_ADM_ESC)&!is.na(NU_IDADE)) %>%
@@ -457,7 +457,7 @@ shinyServer(function(input, output, session) {
             ggplot2::labs(x="Esfera Administrativa",
                  y="Média de Idade",
                  title = "Média de Idade por Esfera Administrativa")
-          plotly::ggplotly(p1, tooltip = "text") %>% plotly::plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+          plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
         }
 
@@ -481,8 +481,8 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Localização",
                y="Quantidade",
                title = "Quantidade de Candidatos por Localização")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::plotly::layout(showlegend = FALSE) %>%
-          style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE) %>%
+          plotly::style(textposition = "top")
 
       } else {
         dados3 <- dados %>% dplyr::filter(!is.na(TP_LOCALIZACAO_ESC)&!is.na(NU_IDADE)) %>%
@@ -499,7 +499,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Localização",
                y="Média de Idade",
                title = "Média de Idade por Localização")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       }
 
@@ -516,7 +516,7 @@ shinyServer(function(input, output, session) {
 
         aggSetor <-dados %>%
             dplyr::group_by(SG_UF_RESIDENCIA) %>%
-            dplyr::dplyr::summarise(quantidade = n(), notaMedia = mean(nt_final,na.rm = TRUE))
+            dplyr::summarise(quantidade = n(), notaMedia = mean(nt_final,na.rm = TRUE))
         aggSetor$escala <- scale(aggSetor$notaMedia) #necessário para criar valores negativos para deixar as disparidades mais evidentes
         treemap::treemap(aggSetor, index = "SG_UF_RESIDENCIA", vSize = "quantidade", vColor = "escala",
                 type = "value", palette = "-RdGy", lowerbound.cex.labels = 0.3,
@@ -539,7 +539,7 @@ shinyServer(function(input, output, session) {
 
     output$Nac <- renderPlotly({
       if(input$variableNac=="Nac1"){
-        df <- dados %>% dplyr::filter(!is.na(TP_NACIONALIDADE)) %>% dplyr::group_by(TP_NACIONALIDADE) %>% dplyr::dplyr::summarise(Numero=n())
+        df <- dados %>% dplyr::filter(!is.na(TP_NACIONALIDADE)) %>% dplyr::group_by(TP_NACIONALIDADE) %>% dplyr::summarise(Numero=n())
         #names(dados)<-c("Nac","Media","Quant")
         df <- data.frame(Nac=c("0-Não informado", "1-Brasileiro Nato", "2-Naturarizado", "3-Estrangeiro", "4-Nato, nascido no exterior"), Quant=df$Numero)
         df$Prop <- round((df$Quant/sum(df$Quant)), digits = 3)
@@ -555,11 +555,11 @@ shinyServer(function(input, output, session) {
                y="Quantidade",
                title = "Quantidade de Candidatos por Nacionalidade")
         plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE) %>%
-          style(textposition = "top")
+          plotly::style(textposition = "top")
 
       } else {
         dados3 <- dados %>% dplyr::filter(!is.na(TP_NACIONALIDADE)&!is.na(NU_IDADE)) %>%
-          dplyr::group_by(TP_NACIONALIDADE) %>% dplyr::dplyr::summarise(Media=mean(NU_IDADE),Quant=n())
+          dplyr::group_by(TP_NACIONALIDADE) %>% dplyr::summarise(Media=mean(NU_IDADE),Quant=n())
         dados3 <- data.frame(Nac=c("0-Não informado", "1-Brasileiro Nato", "2-Naturarizado", "3-Estrangeiro", "4-Nato, nascido no exterior"), Media=dados3$Media, Quant=dados3$Quant)
         p1 <- dados3 %>% ggplot2::ggplot(aes(reorder(Nac, Nac), Media,
                                     fill=Nac, label=Media,
@@ -572,7 +572,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Nacionalidade",
                y="Média de Idade",
                title = "Média de Idade por Nacionalidade")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       }
 
@@ -587,7 +587,7 @@ shinyServer(function(input, output, session) {
 
     output$Trei <- renderPlotly({
       if(input$variableTrei=="Trei1"){
-        df <- dados %>% dplyr::filter(!is.na(IN_TREINEIRO)) %>% dplyr::group_by(IN_TREINEIRO) %>% dplyr::dplyr::summarise(Numero=n())
+        df <- dados %>% dplyr::filter(!is.na(IN_TREINEIRO)) %>% dplyr::group_by(IN_TREINEIRO) %>% dplyr::summarise(Numero=n())
         df <- data.frame(Trei=c("Não Treineiro", "Treineiro"), Quant=df$Numero)
         df$Prop <- round((df$Quant/sum(df$Quant)), digits = 3)
         p1 <- df %>% ggplot2::ggplot(aes(reorder(Trei, Quant, sum),
@@ -602,7 +602,7 @@ shinyServer(function(input, output, session) {
                y="Quantidade",
                title = "Quantidade de Candidatos em Condição de Treinamento")
         plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE) %>%
-          style(textposition = "top")
+          plotly::style(textposition = "top")
 
       } else {
         dados3 <- dados %>% dplyr::filter(!is.na(IN_TREINEIRO)&!is.na(NU_IDADE)) %>%
@@ -619,7 +619,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Treineiro",
                y="Média de Idade",
                title = "Média de Idade dos Candidatos em Condição de Treinamento")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       }
 
@@ -646,7 +646,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Cor/Raça",
                y="Nota Média",
                title = "Nota Média por Cor/Raça")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else {
         if(input$variableD=="D2"){
@@ -664,7 +664,7 @@ shinyServer(function(input, output, session) {
             ggplot2::labs(x="Gênero",
                  y="Nota Média",
                  title = "Nota Média por Gênero")
-          plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+          plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
         }
         else {
@@ -683,7 +683,7 @@ shinyServer(function(input, output, session) {
               ggplot2::labs(x="Estado Civil",
                    y="Nota Média",
                    title = "Nota Média por Estado Civil")
-            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
           }
           else {
@@ -702,7 +702,7 @@ shinyServer(function(input, output, session) {
               ggplot2::labs(x="Estado",
                    y="Nota Média",
                    title = "Nota Média por Estado")
-            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
           } else{
             if(input$variableD=="D5"){
@@ -720,7 +720,7 @@ shinyServer(function(input, output, session) {
                 ggplot2::labs(x="Escolaridade da Mãe",
                      y="Nota Média",
                      title = "Nota Média por Escolaridade da Mãe")
-              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
             } else{
               if(input$variableD=="D6"){
@@ -738,7 +738,7 @@ shinyServer(function(input, output, session) {
                   ggplot2::labs(x="Escolaridade do Pai",
                        y="Nota Média",
                        title = "Nota Média por Escolaridade do Pai")
-                plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
               } else{
                 if(input$variableD=="D7"){
@@ -756,7 +756,7 @@ shinyServer(function(input, output, session) {
                     ggplot2::labs(x="Ocupação da Mãe",
                          y="Nota Média",
                          title = "Nota Média por Ocupação da Mãe")
-                  plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                  plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
                 } else{
                   if(input$variableD=="D8"){
@@ -774,7 +774,7 @@ shinyServer(function(input, output, session) {
                       ggplot2::labs(x="Ocupação do Pai",
                            y="Nota Média",
                            title = "Nota Média por Ocupação do Pai")
-                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
                    } else{
                     if(input$variableD=="D9"){
@@ -792,7 +792,7 @@ shinyServer(function(input, output, session) {
                         ggplot2::labs(x="Tipo de Escola",
                              y="Nota Média",
                              title = "Nota Média por Tipo de Escola")
-                      plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                      plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
 
@@ -812,7 +812,7 @@ shinyServer(function(input, output, session) {
                       ggplot2::labs(x="Renda",
                            y="Nota Média",
                            title = "Nota Média por Renda da Família")
-                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
                    } else{
@@ -830,7 +830,7 @@ shinyServer(function(input, output, session) {
                           ggplot2::labs(x="Tipo de Candidato",
                                y="Nota Média",
                                title = "Nota Média por Tipo de Candidato")
-                        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
                    }
                   }
                 }
@@ -873,7 +873,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Cor/Raça",
                y="Nota Média",
                title = "Nota Média por Cor/Raça em Ciências da Natureza")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else {
         if(input$variableCN=="CN2"){
@@ -892,7 +892,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Gênero",
                y="Nota Média",
                title = "Nota Média por Gênero em Ciências da Natureza")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       }
       else {
@@ -912,7 +912,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Estado Civil",
                y="Nota Média",
                title = "Nota Média por Estado Civil em Ciências da Natureza")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
         } else {
@@ -932,7 +932,7 @@ shinyServer(function(input, output, session) {
               ggplot2::labs(x="Estado",
                    y="Nota Média",
                    title = "Nota Média por Estado em Ciências da Natureza")
-            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
           }
           else {
@@ -952,7 +952,7 @@ shinyServer(function(input, output, session) {
                 ggplot2::labs(x="Tipo de Candidato",
                      y="Nota Média",
                      title = "Nota Média por Tipo de Candidato em Ciências da Natureza")
-              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
 
@@ -973,7 +973,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Tipo de Escola",
                y="Nota Média",
                title = "Nota Média por Tipo de Escola em Ciências da Natureza")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
       }
@@ -1024,7 +1024,7 @@ shinyServer(function(input, output, session) {
               ggplot2::labs(x="Cor/Raça",
                    y="Nota Média",
                    title = "Nota Média por Cor/Raça em Ciências Humanas")
-            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
           } else {
             if(input$variableCH=="CH2"){
@@ -1043,7 +1043,7 @@ shinyServer(function(input, output, session) {
                 ggplot2::labs(x="Gênero",
                      y="Nota Média",
                      title = "Nota Média por Gênero em Ciências Humanas")
-              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
             }
             else {
@@ -1063,7 +1063,7 @@ shinyServer(function(input, output, session) {
                   ggplot2::labs(x="Estado Civil",
                        y="Nota Média",
                        title = "Nota Média por Estado Civil em Ciências Humanas")
-                plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
               } else {
@@ -1083,7 +1083,7 @@ shinyServer(function(input, output, session) {
                     ggplot2::labs(x="Estado",
                          y="Nota Média",
                          title = "Nota Média por Estado em Ciências Humanas")
-                  plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                  plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
                 }
                 else {
@@ -1103,7 +1103,7 @@ shinyServer(function(input, output, session) {
                       ggplot2::labs(x="Tipo de Candidato",
                            y="Nota Média",
                            title = "Nota Média por Tipo de Candidato em Ciências Humanas")
-                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
 
@@ -1124,7 +1124,7 @@ shinyServer(function(input, output, session) {
                       ggplot2::labs(x="Tipo de Escola",
                            y="Nota Média",
                            title = "Nota Média por Tipo de Escola em Ciências Humanas")
-                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
                   }
@@ -1175,7 +1175,7 @@ shinyServer(function(input, output, session) {
               ggplot2::labs(x="Cor/Raça",
                    y="Nota Média",
                    title = "Nota Média por Cor/Raça em Linguagens e Códigos")
-            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
           } else {
             if(input$variableLC=="LC2"){
@@ -1194,7 +1194,7 @@ shinyServer(function(input, output, session) {
                 ggplot2::labs(x="Gênero",
                      y="Nota Média",
                      title = "Nota Média por Gênero em Linguagens e Códigos")
-              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
             }
             else {
@@ -1214,7 +1214,7 @@ shinyServer(function(input, output, session) {
                   ggplot2::labs(x="Estado Civil",
                        y="Nota Média",
                        title = "Nota Média por Estado Civil em Linguagens e Códigos")
-                plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
               } else {
@@ -1234,7 +1234,7 @@ shinyServer(function(input, output, session) {
                     ggplot2::labs(x="Estado",
                          y="Nota Média",
                          title = "Nota Média por Estado em Linguagens e Códigos")
-                  plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                  plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
                 }
                 else {
@@ -1254,7 +1254,7 @@ shinyServer(function(input, output, session) {
                       ggplot2::labs(x="Tipo de Candidato",
                            y="Nota Média",
                            title = "Nota Média por Tipo de Candidato em Linguagens e Códigos")
-                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
 
@@ -1275,7 +1275,7 @@ shinyServer(function(input, output, session) {
                       ggplot2::labs(x="Tipo de Escola",
                            y="Nota Média",
                            title = "Nota Média por Tipo de Escola em Linguagens e Códigos")
-                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
                   }
@@ -1326,7 +1326,7 @@ shinyServer(function(input, output, session) {
               ggplot2::labs(x="Cor/Raça",
                    y="Nota Média",
                    title = "Nota Média por Cor/Raça em Matemática")
-            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
           } else {
             if(input$variableMT=="MT2"){
@@ -1345,7 +1345,7 @@ shinyServer(function(input, output, session) {
                 ggplot2::labs(x="Gênero",
                      y="Nota Média",
                      title = "Nota Média por Gênero em Matemática")
-              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
             }
             else {
@@ -1365,7 +1365,7 @@ shinyServer(function(input, output, session) {
                   ggplot2::labs(x="Estado Civil",
                        y="Nota Média",
                        title = "Nota Média por Estado Civil em Matemática")
-                plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
               } else {
@@ -1385,7 +1385,7 @@ shinyServer(function(input, output, session) {
                     ggplot2::labs(x="Estado",
                          y="Nota Média",
                          title = "Nota Média por Estado em Matemática")
-                  plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                  plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
                 }
                 else {
@@ -1405,7 +1405,7 @@ shinyServer(function(input, output, session) {
                       ggplot2::labs(x="Tipo de Candidato",
                            y="Nota Média",
                            title = "Nota Média por Tipo de Candidato em Matemática")
-                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
 
@@ -1426,7 +1426,7 @@ shinyServer(function(input, output, session) {
                       ggplot2::labs(x="Tipo de Escola",
                            y="Nota Média",
                            title = "Nota Média por Tipo de Escola em Matemática")
-                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
                   }
@@ -1477,7 +1477,7 @@ shinyServer(function(input, output, session) {
               ggplot2::labs(x="Cor/Raça",
                    y="Nota Média",
                    title = "Nota Média por Cor/Raça (Nota Final)")
-            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
           } else {
             if(input$variableNF=="NF2"){
@@ -1496,7 +1496,7 @@ shinyServer(function(input, output, session) {
                 ggplot2::labs(x="Gênero",
                      y="Nota Média",
                      title = "Nota Média por Gênero (Nota Final)")
-              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
             }
             else {
@@ -1516,7 +1516,7 @@ shinyServer(function(input, output, session) {
                   ggplot2::labs(x="Estado Civil",
                        y="Nota Média",
                        title = "Nota Média por Estado Civil (Nota Final)")
-                plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
               } else {
@@ -1536,7 +1536,7 @@ shinyServer(function(input, output, session) {
                     ggplot2::labs(x="Estado",
                          y="Nota Média",
                          title = "Nota Média por Estado (Nota Final)")
-                  plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                  plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
                 }
                 else {
@@ -1556,7 +1556,7 @@ shinyServer(function(input, output, session) {
                       ggplot2::labs(x="Tipo de Candidato",
                            y="Nota Média",
                            title = "Nota Média por Tipo de Candidato (Nota Final)")
-                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
 
@@ -1577,7 +1577,7 @@ shinyServer(function(input, output, session) {
                       ggplot2::labs(x="Tipo de Escola",
                            y="Nota Média",
                            title = "Nota Média por Tipo de Escola (Nota Final)")
-                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
                   }
@@ -1627,7 +1627,7 @@ shinyServer(function(input, output, session) {
                y="Média de Idade",
                title = "Quantidade de Candidatos por Situação da Redação")
         plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE) %>%
-          style(textposition = "top")
+          plotly::style(textposition = "top")
     })
 
 
@@ -1675,7 +1675,7 @@ shinyServer(function(input, output, session) {
               ggplot2::labs(x="Cor/Raça",
                    y="Nota Média",
                    title = "Nota Média por Cor/Raça na Competência 1 da Redação")
-            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
           } else {
             if(input$variableCOMP1=="COMP12"){
@@ -1694,7 +1694,7 @@ shinyServer(function(input, output, session) {
                 ggplot2::labs(x="Gênero",
                      y="Nota Média",
                      title = "Nota Média por Gênero na Competência 1 da Redação")
-              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
             }
             else {
@@ -1714,7 +1714,7 @@ shinyServer(function(input, output, session) {
                   ggplot2::labs(x="Estado Civil",
                        y="Nota Média",
                        title = "Nota Média por Estado Civil na Competência 1 da Redação")
-                plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
               } else {
@@ -1734,7 +1734,7 @@ shinyServer(function(input, output, session) {
                     ggplot2::labs(x="Estado",
                          y="Nota Média",
                          title = "Nota Média por Estado na Competência 1 da Redação")
-                  plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                  plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
                 }
                 else {
@@ -1754,7 +1754,7 @@ shinyServer(function(input, output, session) {
                       ggplot2::labs(x="Tipo de Candidato",
                            y="Nota Média",
                            title = "Nota Média por Tipo de Candidato na Competência 1 da Redação")
-                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
 
@@ -1775,7 +1775,7 @@ shinyServer(function(input, output, session) {
                       ggplot2::labs(x="Tipo de Escola",
                            y="Nota Média",
                            title = "Nota Média por Tipo de Escola na Competência 1 da Redação")
-                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
                   }
@@ -1826,7 +1826,7 @@ shinyServer(function(input, output, session) {
               ggplot2::labs(x="Cor/Raça",
                    y="Nota Média",
                    title = "Nota Média por Cor/Raça na Competência 2 da Redação")
-            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
           } else {
             if(input$variableCOMP2=="COMP22"){
@@ -1845,7 +1845,7 @@ shinyServer(function(input, output, session) {
                 ggplot2::labs(x="Gênero",
                      y="Nota Média",
                      title = "Nota Média por Gênero na Competência 2 da Redação")
-              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
             }
             else {
@@ -1865,7 +1865,7 @@ shinyServer(function(input, output, session) {
                   ggplot2::labs(x="Estado Civil",
                        y="Nota Média",
                        title = "Nota Média por Estado Civil na Competência 2 da Redação")
-                plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
               } else {
@@ -1885,7 +1885,7 @@ shinyServer(function(input, output, session) {
                     ggplot2::labs(x="Estado",
                          y="Nota Média",
                          title = "Nota Média por Estado na Competência 2 da Redação")
-                  plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                  plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
                 }
                 else {
@@ -1905,7 +1905,7 @@ shinyServer(function(input, output, session) {
                       ggplot2::labs(x="Tipo de Candidato",
                            y="Nota Média",
                            title = "Nota Média por Tipo de Candidato na Competência 2 da Redação")
-                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
 
@@ -1926,7 +1926,7 @@ shinyServer(function(input, output, session) {
                       ggplot2::labs(x="Tipo de Escola",
                            y="Nota Média",
                            title = "Nota Média por Tipo de Escola na Competência 2 da Redação")
-                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
                   }
@@ -1977,7 +1977,7 @@ shinyServer(function(input, output, session) {
               ggplot2::labs(x="Cor/Raça",
                    y="Nota Média",
                    title = "Nota Média por Cor/Raça na Competência 3 da Redação")
-            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
           } else {
             if(input$variableCOMP3=="COMP32"){
@@ -1996,7 +1996,7 @@ shinyServer(function(input, output, session) {
                 ggplot2::labs(x="Gênero",
                      y="Nota Média",
                      title = "Nota Média por Gênero na Competência 3 da Redação")
-              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
             }
             else {
@@ -2016,7 +2016,7 @@ shinyServer(function(input, output, session) {
                   ggplot2::labs(x="Estado Civil",
                        y="Nota Média",
                        title = "Nota Média por Estado Civil na Competência 3 da Redação")
-                plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
               } else {
@@ -2036,7 +2036,7 @@ shinyServer(function(input, output, session) {
                     ggplot2::labs(x="Estado",
                          y="Nota Média",
                          title = "Nota Média por Estado na Competência 3 da Redação")
-                  plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                  plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
                 }
                 else {
@@ -2056,7 +2056,7 @@ shinyServer(function(input, output, session) {
                       ggplot2::labs(x="Tipo de Candidato",
                            y="Nota Média",
                            title = "Nota Média por Tipo de Candidato na Competência 3 da Redação")
-                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
 
@@ -2077,7 +2077,7 @@ shinyServer(function(input, output, session) {
                       ggplot2::labs(x="Tipo de Escola",
                            y="Nota Média",
                            title = "Nota Média por Tipo de Escola na Competência 3 da Redação")
-                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
                   }
@@ -2128,7 +2128,7 @@ shinyServer(function(input, output, session) {
               ggplot2::labs(x="Cor/Raça",
                    y="Nota Média",
                    title = "Nota Média por Cor/Raça na Competência 4 da Redação")
-            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
           } else {
             if(input$variableCOMP4=="COMP42"){
@@ -2147,7 +2147,7 @@ shinyServer(function(input, output, session) {
                 ggplot2::labs(x="Gênero",
                      y="Nota Média",
                      title = "Nota Média por Gênero na Competência 4 da Redação")
-              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
             }
             else {
@@ -2167,7 +2167,7 @@ shinyServer(function(input, output, session) {
                   ggplot2::labs(x="Estado Civil",
                        y="Nota Média",
                        title = "Nota Média por Estado Civil na Competência 4 da Redação")
-                plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
               } else {
@@ -2187,7 +2187,7 @@ shinyServer(function(input, output, session) {
                     ggplot2::labs(x="Estado",
                          y="Nota Média",
                          title = "Nota Média por Estado na Competência 4 da Redação")
-                  plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                  plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
                 }
                 else {
@@ -2207,7 +2207,7 @@ shinyServer(function(input, output, session) {
                       ggplot2::labs(x="Tipo de Candidato",
                            y="Nota Média",
                            title = "Nota Média por Tipo de Candidato na Competência 4 da Redação")
-                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
 
@@ -2228,7 +2228,7 @@ shinyServer(function(input, output, session) {
                       ggplot2::labs(x="Tipo de Escola",
                            y="Nota Média",
                            title = "Nota Média por Tipo de Escola na Competência 4 da Redação")
-                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
                   }
@@ -2279,7 +2279,7 @@ shinyServer(function(input, output, session) {
               ggplot2::labs(x="Cor/Raça",
                    y="Nota Média",
                    title = "Nota Média por Cor/Raça na Competência 5 da Redação")
-            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
           } else {
             if(input$variableCOMP5=="COMP52"){
@@ -2298,7 +2298,7 @@ shinyServer(function(input, output, session) {
                 ggplot2::labs(x="Gênero",
                      y="Nota Média",
                      title = "Nota Média por Gênero na Competência 5 da Redação")
-              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
             }
             else {
@@ -2318,7 +2318,7 @@ shinyServer(function(input, output, session) {
                   ggplot2::labs(x="Estado Civil",
                        y="Nota Média",
                        title = "Nota Média por Estado Civil na Competência 5 da Redação")
-                plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
               } else {
@@ -2338,7 +2338,7 @@ shinyServer(function(input, output, session) {
                     ggplot2::labs(x="Estado",
                          y="Nota Média",
                          title = "Nota Média por Estado na Competência 5 da Redação")
-                  plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                  plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
                 }
                 else {
@@ -2358,7 +2358,7 @@ shinyServer(function(input, output, session) {
                       ggplot2::labs(x="Tipo de Candidato",
                            y="Nota Média",
                            title = "Nota Média por Tipo de Candidato na Competência 5 da Redação")
-                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
 
@@ -2379,7 +2379,7 @@ shinyServer(function(input, output, session) {
                       ggplot2::labs(x="Tipo de Escola",
                            y="Nota Média",
                            title = "Nota Média por Tipo de Escola na Competência 5 da Redação")
-                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
                   }
@@ -2430,7 +2430,7 @@ shinyServer(function(input, output, session) {
               ggplot2::labs(x="Cor/Raça",
                    y="Nota Média",
                    title = "Nota Média por Cor/Raça na Redação")
-            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+            plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
           } else {
             if(input$variableRE=="RE2"){
@@ -2449,7 +2449,7 @@ shinyServer(function(input, output, session) {
                 ggplot2::labs(x="Gênero",
                      y="Nota Média",
                      title = "Nota Média por Gênero na Redação")
-              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
             }
             else {
@@ -2469,7 +2469,7 @@ shinyServer(function(input, output, session) {
                   ggplot2::labs(x="Estado Civil",
                        y="Nota Média",
                        title = "Nota Média por Estado Civil na Redação")
-                plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
               } else {
@@ -2489,7 +2489,7 @@ shinyServer(function(input, output, session) {
                     ggplot2::labs(x="Estado",
                          y="Nota Média",
                          title = "Nota Média por Estado na Redação")
-                  plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                  plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
                 }
                 else {
@@ -2509,7 +2509,7 @@ shinyServer(function(input, output, session) {
                       ggplot2::labs(x="Tipo de Candidato",
                            y="Nota Média",
                            title = "Nota Média por Tipo de Candidato na Redação")
-                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
 
@@ -2530,7 +2530,7 @@ shinyServer(function(input, output, session) {
                       ggplot2::labs(x="Tipo de Escola",
                            y="Nota Média",
                            title = "Nota Média por Tipo de Escola na Redação")
-                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+                    plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
                   }
@@ -2689,15 +2689,15 @@ shinyServer(function(input, output, session) {
             tplot1 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q001", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q001", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q001", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
         } else{ if(input$variableQ=="Q002") {
 
@@ -2709,15 +2709,15 @@ shinyServer(function(input, output, session) {
             tplot2 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q002", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q002", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q002", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot2, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
         } else{ if(input$variableQ=="Q003") {
 
@@ -2729,15 +2729,15 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q003", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q003", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q003", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
         } else{ if(input$variableQ=="Q004") {
             temp <- dados %>%
@@ -2748,15 +2748,15 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q004", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q004", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q004", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
 
         } else{ if(input$variableQ=="Q005") {
@@ -2768,16 +2768,16 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q005", values=c ("#005fff","#007fff","#009fff","#00afff","#00cfff","#00efff","#00ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff")) +
-#                scale_fill_manual("Q005", values=brewer.pal (9, "color(20)")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q005", values=c ("#005fff","#007fff","#009fff","#00afff","#00cfff","#00efff","#00ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff")) +
+#                ggplot2::scale_fill_manual("Q005", values=brewer.pal (9, "color(20)")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q005", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
         } else{ if(input$variableQ=="Q006") {
             temp <- dados %>%
@@ -2788,16 +2788,16 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q006", values=c ("#005fff","#007fff","#009fff","#00afff","#00cfff","#00efff","#00ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff")) +
-                #scale_fill_manual("Q006", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q006", values=c ("#005fff","#007fff","#009fff","#00afff","#00cfff","#00efff","#00ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff","#01ffff")) +
+                #ggplot2::scale_fill_manual("Q006", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q006", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
 
 
@@ -2810,15 +2810,15 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q007", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q007", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q007", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
 
         } else{ if(input$variableQ=="Q008") {
@@ -2830,15 +2830,15 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q008", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q008", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q008", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
         } else{ if(input$variableQ=="Q009") {
             temp <- dados %>%
@@ -2849,15 +2849,15 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q009", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q009", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q009", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
         } else{ if(input$variableQ=="Q010") {
             temp <- dados %>%
@@ -2868,15 +2868,15 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q010", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q010", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q010", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
         } else{ if(input$variableQ=="Q011") {
             temp <- dados %>%
@@ -2887,15 +2887,15 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q011", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q011", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q011", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
         } else{ if(input$variableQ=="Q012") {
             temp <- dados %>%
@@ -2906,15 +2906,15 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q012", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q012", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q012", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
         } else{ if(input$variableQ=="Q013") {
             temp <- dados %>%
@@ -2925,15 +2925,15 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q013", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q013", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q013", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
         } else{ if(input$variableQ=="Q014") {
             temp <- dados %>%
@@ -2944,15 +2944,15 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q014", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q014", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q014", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
 
         } else{ if(input$variableQ=="Q015") {
@@ -2964,15 +2964,15 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q015", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q015", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q015", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
         } else{ if(input$variableQ=="Q016") {
             temp <- dados %>%
@@ -2983,15 +2983,15 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q016", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q016", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q016", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
         } else{ if(input$variableQ=="Q017") {
             temp <- dados %>%
@@ -3002,15 +3002,15 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q017", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q017", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q017", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
         } else{ if(input$variableQ=="Q018") {
             temp <- dados %>%
@@ -3021,15 +3021,15 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q018", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q018", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q018", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
         } else{ if(input$variableQ=="Q019") {
             temp <- dados %>%
@@ -3040,15 +3040,15 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q019", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q019", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q019", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
         } else{ if(input$variableQ=="Q020") {
             temp <- dados %>%
@@ -3059,15 +3059,15 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q020", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q020", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q020", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
         } else{ if(input$variableQ=="Q021") {
             temp <- dados %>%
@@ -3078,15 +3078,15 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q021", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q021", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q021", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
         } else{ if(input$variableQ=="Q022") {
             temp <- dados %>%
@@ -3097,15 +3097,15 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q022", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q022", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q022", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
         } else{ if(input$variableQ=="Q023") {
             temp <- dados %>%
@@ -3116,15 +3116,15 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q023", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q023", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q023", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
         } else{ if(input$variableQ=="Q024") {
             temp <- dados %>%
@@ -3135,15 +3135,15 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q024", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q024", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q024", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
         } else{ if(input$variableQ=="Q025") {
           temp <- dados %>%
@@ -3154,15 +3154,15 @@ shinyServer(function(input, output, session) {
           tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                         text=paste("Resposta: ", Var1, "<br>",
                                                    "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-            geom_bar(stat = "identity") +
-            scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-            scale_fill_manual("Q025", values=brewer.pal(9, "Paired")) +
+            ggplot2::geom_bar(stat = "identity") +
+            ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+            ggplot2::scale_fill_manual("Q025", values=brewer.pal(9, "Paired")) +
             ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
             ggplot2::labs(x="Q025", y="Número de Candidatos")+
-            theme_minimal() +
-            theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+            ggplot2::theme_minimal() +
+            ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
           plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-            style(textposition = "top")
+            plotly::style(textposition = "top")
 
         } else{ if(input$variableQ=="Q026") {
           temp <- dados %>%
@@ -3173,15 +3173,15 @@ shinyServer(function(input, output, session) {
           tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                         text=paste("Resposta: ", Var1, "<br>",
                                                    "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-            geom_bar(stat = "identity") +
-            scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-            scale_fill_manual("Q026", values=brewer.pal(9, "Paired")) +
+            ggplot2::geom_bar(stat = "identity") +
+            ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+            ggplot2::scale_fill_manual("Q026", values=brewer.pal(9, "Paired")) +
             ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
             ggplot2::labs(x="Q026", y="Número de Candidatos")+
-            theme_minimal() +
-            theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+            ggplot2::theme_minimal() +
+            ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
           plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-            style(textposition = "top")
+            plotly::style(textposition = "top")
 
 #        } else{ if(input$variableQ=="Q026") {
 #            temp <- dados %>%
@@ -3192,15 +3192,15 @@ shinyServer(function(input, output, session) {
 #            tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
 #                                          text=paste("Resposta: ", Var1, "<br>",
 #                                                     "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-#                geom_bar(stat = "identity") +
-#                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-#                scale_fill_manual("Q026", values=brewer.pal(9, "Paired")) +
+#                ggplot2::geom_bar(stat = "identity") +
+#                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+#                ggplot2::scale_fill_manual("Q026", values=brewer.pal(9, "Paired")) +
 #                ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
 #                ggplot2::labs(x="Q026", y="Número de Candidatos")+
-#                theme_minimal() +
-#                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+#                ggplot2::theme_minimal() +
+#                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
 #            plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-#                style(textposition = "top")
+#                plotly::style(textposition = "top")
 
         } else{ if(input$variableQ=="Q027") {
             temp <- dados %>%
@@ -3211,15 +3211,15 @@ shinyServer(function(input, output, session) {
             tplot3 <- temp %>% ggplot2::ggplot(aes(x = Var1, y=Freq, fill=Var1,
                                           text=paste("Resposta: ", Var1, "<br>",
                                                      "Quant: ", Freq), label = sprintf("%.02f %%", Freq/sum(Freq)*100))) +
-                geom_bar(stat = "identity") +
-                scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
-                scale_fill_manual("Q027", values=brewer.pal(9, "Paired")) +
+                ggplot2::geom_bar(stat = "identity") +
+                ggplot2::scale_x_discrete(labels = function(x) str_wrap(x, width = 20)) +
+                ggplot2::scale_fill_manual("Q027", values=brewer.pal(9, "Paired")) +
                 ggplot2::geom_text(position = position_dodge(width = 0.9), vjust=-0.3)+
                 ggplot2::labs(x="Q027", y="Número de Candidatos")+
-                theme_minimal() +
-                theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
+                ggplot2::theme_minimal() +
+                ggplot2::theme( axis.text.x  = element_text(angle=0, vjust=0.5, size=10), legend.position="none")
             plotly::ggplotly(tplot3, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>%
-                style(textposition = "top")
+                plotly::style(textposition = "top")
 
         } else{ ##
 
@@ -3662,7 +3662,7 @@ shinyServer(function(input, output, session) {
                 ggplot2::labs(x="Q001",
                      y="Nota Média",
                      title = "")
-              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+              plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
       } else{ if(input$variableQ2=="Q002") {
@@ -3682,7 +3682,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q002",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else{ if(input$variableQ2=="Q003") {
 
@@ -3701,7 +3701,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q003",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else{ if(input$variableQ2=="Q004") {
         dados3 <- dados %>% dplyr::filter(!is.na(Q004)&!is.na(nt_final)) %>%
@@ -3719,7 +3719,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q004",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
       } else{ if(input$variableQ2=="Q005") {
@@ -3739,7 +3739,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q005",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
       } else{ if(input$variableQ2=="Q006") {
@@ -3758,7 +3758,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q006",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
 
@@ -3778,7 +3778,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q007",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
       } else{ if(input$variableQ2=="Q008") {
@@ -3797,7 +3797,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q008",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else{ if(input$variableQ2=="Q009") {
         dados3 <- dados %>% dplyr::filter(!is.na(Q009)&!is.na(nt_final)) %>%
@@ -3815,7 +3815,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q009",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else{ if(input$variableQ2=="Q010") {
         dados3 <- dados %>% dplyr::filter(!is.na(Q010)&!is.na(nt_final)) %>%
@@ -3833,7 +3833,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q010",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else{ if(input$variableQ2=="Q011") {
         dados3 <- dados %>% dplyr::filter(!is.na(Q011)&!is.na(nt_final)) %>%
@@ -3851,7 +3851,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q011",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else{ if(input$variableQ2=="Q012") {
         dados3 <- dados %>% dplyr::filter(!is.na(Q012)&!is.na(nt_final)) %>%
@@ -3869,7 +3869,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q012",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else{ if(input$variableQ2=="Q013") {
         dados3 <- dados %>% dplyr::filter(!is.na(Q013)&!is.na(nt_final)) %>%
@@ -3887,7 +3887,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q013",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else{ if(input$variableQ2=="Q014") {
         dados3 <- dados %>% dplyr::filter(!is.na(Q014)&!is.na(nt_final)) %>%
@@ -3905,7 +3905,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q014",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
 
       } else{ if(input$variableQ2=="Q015") {
@@ -3924,7 +3924,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q015",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else{ if(input$variableQ2=="Q016") {
         dados3 <- dados %>% dplyr::filter(!is.na(Q016)&!is.na(nt_final)) %>%
@@ -3942,7 +3942,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q016",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else{ if(input$variableQ2=="Q017") {
         dados3 <- dados %>% dplyr::filter(!is.na(Q017)&!is.na(nt_final)) %>%
@@ -3960,7 +3960,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q017",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else{ if(input$variableQ2=="Q018") {
         dados3 <- dados %>% dplyr::filter(!is.na(Q018)&!is.na(nt_final)) %>%
@@ -3978,7 +3978,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q018",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else{ if(input$variableQ2=="Q019") {
         dados3 <- dados %>% dplyr::filter(!is.na(Q019)&!is.na(nt_final)) %>%
@@ -3996,7 +3996,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q019",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else{ if(input$variableQ2=="Q020") {
         dados3 <- dados %>% dplyr::filter(!is.na(Q020)&!is.na(nt_final)) %>%
@@ -4014,7 +4014,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q020",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else{ if(input$variableQ2=="Q021") {
         dados3 <- dados %>% dplyr::filter(!is.na(Q021)&!is.na(nt_final)) %>%
@@ -4032,7 +4032,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q021",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else{ if(input$variableQ2=="Q022") {
         dados3 <- dados %>% dplyr::filter(!is.na(Q022)&!is.na(nt_final)) %>%
@@ -4050,7 +4050,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q022",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else{ if(input$variableQ2=="Q023") {
         dados3 <- dados %>% dplyr::filter(!is.na(Q023)&!is.na(nt_final)) %>%
@@ -4068,7 +4068,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q023",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else{ if(input$variableQ2=="Q024") {
         dados3 <- dados %>% dplyr::filter(!is.na(Q024)&!is.na(nt_final)) %>%
@@ -4086,7 +4086,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q024",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else{ if(input$variableQ2=="Q025") {
         dados3 <- dados %>% dplyr::filter(!is.na(Q025)&!is.na(nt_final)) %>%
@@ -4104,7 +4104,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q025",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else{ if(input$variableQ2=="Q026") {
         dados3 <- dados %>% dplyr::filter(!is.na(Q026)&!is.na(nt_final)) %>%
@@ -4122,7 +4122,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q026",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else{ if(input$variableQ2=="Q027") {
         dados3 <- dados %>% dplyr::filter(!is.na(Q027)&!is.na(nt_final)) %>%
@@ -4140,7 +4140,7 @@ shinyServer(function(input, output, session) {
           ggplot2::labs(x="Q027",
                y="Nota Média",
                title = "")
-        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% style(textposition = "top")
+        plotly::ggplotly(p1, tooltip = "text") %>% plotly::layout(showlegend = FALSE)%>% plotly::style(textposition = "top")
 
       } else{ ##
 
