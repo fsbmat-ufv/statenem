@@ -1,16 +1,16 @@
 # statenem
 
-Package for generating shiny dashboard with data from Enem. To install it just use:
+Package for generating shiny dashboard with data from Enem. You can install statenem from github with:
 
 ```{r}
-library(devtools)
-install_github("fsbmat-ufv/statenem")
-library(statenem)
+# install.packages("devtools")
+devtools::install_github("fsbmat-ufv/statenem")
 ```
 
 If you want to access the data used, you can use the functions:
 
 ```{r}
+library(statenem)
 enemdown(2018)
 enemclear(2018)
 ```

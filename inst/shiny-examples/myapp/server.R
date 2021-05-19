@@ -248,7 +248,7 @@ shinyServer(function(input, output, session) {
         p1 <- df %>% ggplot2::ggplot(aes(reorder(Sit, Sit),
                                 Quant, fill=Sit,
                                 label=Quant,
-                                text=paste("Cor/Raça: ", Sit, "<br>",
+                                text=paste("Situação: ", Sit, "<br>",
                                            "Número de Candidatos: ", Quant, "<br>",
                                            "Proporção Candidatos: ", Prop))) +
           ggplot2::geom_col(show.legend = FALSE)+
@@ -265,7 +265,7 @@ shinyServer(function(input, output, session) {
         dados3 <- data.frame(Sit=c("1-Concluído", "2-Concluíndo em 2018", "3-Concluíndo após 2018", "4-Não concluído e não cursando"), Media=dados3$Media, Quant=dados3$Quant)
         p1 <- dados3 %>% ggplot2::ggplot(aes(reorder(Sit, Sit), Media,
                                     fill=Sit, label=Media,
-                                    text=paste("Cor/Raça: ", Sit, "<br>",
+                                    text=paste("Situação: ", Sit, "<br>",
                                                "Média de Idade: ", Media, "<br>",
                                                "Quantidade: ", Quant))) +
           ggplot2::geom_col(show.legend = FALSE)+
@@ -292,7 +292,7 @@ shinyServer(function(input, output, session) {
         p1 <- df %>% ggplot2::ggplot(aes(reorder(Anno, Anno),
                                 Quant, fill=Anno,
                                 label=Quant,
-                                text=paste("Cor/Raça: ", Anno, "<br>",
+                                text=paste("Ano de Conclusão: ", Anno, "<br>",
                                            "Número de Candidatos: ", Quant, "<br>",
                                            "Proporção Candidatos: ", Prop))) +
           ggplot2::geom_col(show.legend = FALSE)+
@@ -309,7 +309,7 @@ shinyServer(function(input, output, session) {
         dados3 <- data.frame(Anno=c("Não informado", "2017", "2016", "2015", "2014", "2013", "2012", "2011", "2010", "2009", "2008", "2007", "2006 ou Antes"), Media=dados3$Media, Quant=dados3$Quant)
         p1 <- dados3 %>% ggplot2::ggplot(aes(reorder(Anno, Anno), Media,
                                     fill=Anno, label=Media,
-                                    text=paste("Cor/Raça: ", Anno, "<br>",
+                                    text=paste("Ano de Conclusão: ", Anno, "<br>",
                                                "Média de Idade: ", Media, "<br>",
                                                "Quantidade: ", Quant))) +
           ggplot2::geom_col(show.legend = FALSE)+
@@ -335,7 +335,7 @@ shinyServer(function(input, output, session) {
         p1 <- df %>% ggplot2::ggplot(aes(reorder(Tipo, Tipo),
                                 Quant, fill=Tipo,
                                 label=Quant,
-                                text=paste("Cor/Raça: ", Tipo, "<br>",
+                                text=paste("Tipo de Escola: ", Tipo, "<br>",
                                            "Número de Candidatos: ", Quant, "<br>",
                                            "Proporção Candidatos: ", Prop))) +
           ggplot2::geom_col(show.legend = FALSE)+
@@ -352,7 +352,7 @@ shinyServer(function(input, output, session) {
         dados3 <- data.frame(Tipo=c("Não Respondeu", "Pública", "Exterior", "Privada"), Media=dados3$Media, Quant=dados3$Quant)
         p1 <- dados3 %>% ggplot2::ggplot(aes(reorder(Tipo, Tipo), Media,
                                     fill=Tipo, label=Media,
-                                    text=paste("Cor/Raça: ", Tipo, "<br>",
+                                    text=paste("Tipo de Escola: ", Tipo, "<br>",
                                                "Média de Idade: ", Media, "<br>",
                                                "Quantidade: ", Quant))) +
           ggplot2::geom_col(show.legend = FALSE)+
@@ -380,7 +380,7 @@ shinyServer(function(input, output, session) {
         p1 <- df %>% ggplot2::ggplot(aes(reorder(Tip, Tip),
                                 Quant, fill=Tip,
                                 label=Quant,
-                                text=paste("Cor/Raça: ", Tip, "<br>",
+                                text=paste("Tipo de Ensino: ", Tip, "<br>",
                                            "Número de Candidatos: ", Quant, "<br>",
                                            "Proporção Candidatos: ", Prop))) +
           ggplot2::geom_col(show.legend = FALSE)+
@@ -397,7 +397,7 @@ shinyServer(function(input, output, session) {
         dados3 <- data.frame(Tip=c("Ensino Regular", "Educação Especial - Modalidade Substitutiva", "Educação de Jovens e Adultos"), Media=dados3$Media, Quant=dados3$Quant)
         p1 <- dados3 %>% ggplot2::ggplot(aes(reorder(Tip, Tip), Media,
                                     fill=Tip, label=Media,
-                                    text=paste("Cor/Raça: ", Tip, "<br>",
+                                    text=paste("Tipo de Ensino: ", Tip, "<br>",
                                                "Média de Idade: ", Media, "<br>",
                                                "Quantidade: ", Quant))) +
           ggplot2::geom_col(show.legend = FALSE)+
@@ -431,7 +431,7 @@ shinyServer(function(input, output, session) {
           p1 <- df %>% ggplot2::ggplot(aes(reorder(Dadm, Dadm),
                                   Quant, fill=Dadm,
                                   label=Quant,
-                                  text=paste("Cor/Raça: ", Dadm, "<br>",
+                                  text=paste("Esfera Administrativa: ", Dadm, "<br>",
                                              "Número de Candidatos: ", Quant, "<br>",
                                              "Proporção Candidatos: ", Prop))) +
             ggplot2::geom_col(show.legend = FALSE)+
@@ -448,7 +448,7 @@ shinyServer(function(input, output, session) {
           dados3 <- data.frame(Dadm=c("Federal", "Estadual", "Municipal", "Privada"), Media=dados3$Media, Quant=dados3$Quant)
           p1 <- dados3 %>% ggplot2::ggplot(aes(reorder(Dadm, Dadm), Media,
                                       fill=Dadm, label=Media,
-                                      text=paste("Cor/Raça: ", Dadm, "<br>",
+                                      text=paste("Esfera Administrativa: ", Dadm, "<br>",
                                                  "Média de Idade: ", Media, "<br>",
                                                  "Quantidade: ", Quant))) +
             ggplot2::geom_col(show.legend = FALSE)+
@@ -473,7 +473,7 @@ shinyServer(function(input, output, session) {
         p1 <- df %>% ggplot2::ggplot(aes(reorder(Loc, Loc),
                                 Quant, fill=Loc,
                                 label=Quant,
-                                text=paste("Cor/Raça: ", Loc, "<br>",
+                                text=paste("Localização: ", Loc, "<br>",
                                            "Número de Candidatos: ", Quant, "<br>",
                                            "Proporção Candidatos: ", Prop))) +
           ggplot2::geom_col(show.legend = FALSE)+
@@ -490,7 +490,7 @@ shinyServer(function(input, output, session) {
         dados3 <- data.frame(Loc=c("Urbana", "Rural"), Media=dados3$Media, Quant=dados3$Quant)
         p1 <- dados3 %>% ggplot2::ggplot(aes(reorder(Loc, Loc), Media,
                                     fill=Loc, label=Media,
-                                    text=paste("Cor/Raça: ", Loc, "<br>",
+                                    text=paste("Localização: ", Loc, "<br>",
                                                "Média de Idade: ", Media, "<br>",
                                                "Quantidade: ", Quant))) +
           ggplot2::geom_col(show.legend = FALSE)+
@@ -546,7 +546,7 @@ shinyServer(function(input, output, session) {
         p1 <- df %>% ggplot2::ggplot(aes(reorder(Nac, Nac),
                                 Quant, fill=Nac,
                                 label=Quant,
-                                text=paste("Cor/Raça: ", Nac, "<br>",
+                                text=paste("Nacionalidade: ", Nac, "<br>",
                                            "Número de Candidatos: ", Quant, "<br>",
                                            "Proporção Candidatos: ", Prop))) +
           ggplot2::geom_col(show.legend = FALSE)+
@@ -563,7 +563,7 @@ shinyServer(function(input, output, session) {
         dados3 <- data.frame(Nac=c("0-Não informado", "1-Brasileiro Nato", "2-Naturarizado", "3-Estrangeiro", "4-Nato, nascido no exterior"), Media=dados3$Media, Quant=dados3$Quant)
         p1 <- dados3 %>% ggplot2::ggplot(aes(reorder(Nac, Nac), Media,
                                     fill=Nac, label=Media,
-                                    text=paste("Cor/Raça: ", Nac, "<br>",
+                                    text=paste("Nacionalidade: ", Nac, "<br>",
                                                "Média de Idade: ", Media, "<br>",
                                                "Quantidade: ", Quant))) +
           ggplot2::geom_col(show.legend = FALSE)+
@@ -593,7 +593,7 @@ shinyServer(function(input, output, session) {
         p1 <- df %>% ggplot2::ggplot(aes(reorder(Trei, Quant, sum),
                                 Quant, fill=Trei,
                                 label=Quant,
-                                text=paste("Cor/Raça: ", Trei, "<br>",
+                                text=paste("Treineiro: ", Trei, "<br>",
                                            "Número de Candidatos: ", Quant, "<br>",
                                            "Proporção Candidatos: ", Prop))) +
           ggplot2::geom_col(show.legend = FALSE)+
@@ -610,7 +610,7 @@ shinyServer(function(input, output, session) {
         dados3 <- data.frame(Trei=c("Não Treineiro", "Treineiro"), Media=dados3$Media, Quant=dados3$Quant)
         p1 <- dados3 %>% ggplot2::ggplot(aes(reorder(Trei, Media), Media,
                                     fill=Trei, label=Media,
-                                    text=paste("Cor/Raça: ", Trei, "<br>",
+                                    text=paste("Treineiro: ", Trei, "<br>",
                                                "Média de Idade: ", Media, "<br>",
                                                "Quantidade: ", Quant))) +
           ggplot2::geom_col(show.legend = FALSE)+
