@@ -1,6 +1,6 @@
 Package: statenem
 Title: Package for the generation of interactive visualization of the National High School Exam
-Version: 0.0.0.9000
+Version: 0.0.9000
 Authors@R: c(
   person( given = "Fernando", family = "de Souza Bastos", role = c( "aut", "cre" ),
           email = "fernando.bastos@ufv.br" ),
